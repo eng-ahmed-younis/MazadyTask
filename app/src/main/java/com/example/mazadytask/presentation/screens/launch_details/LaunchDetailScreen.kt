@@ -34,6 +34,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.mazadytask.R
 import com.example.mazadytask.di.factory.LaunchDetailsParams
 import com.example.mazadytask.di.factory.LaunchDetailsViewModelFactory
 import com.example.mazadytask.domain.model.LaunchDetails
@@ -46,6 +47,7 @@ import com.example.mazadytask.presentation.screens.launch_details.mvi.LaunchDeta
 import com.example.mazadytask.presentation.ui.theme.LocalLaunchColors
 import com.example.mazadytask.presentation.utils.UiErrorType
 import com.example.mazadytask.presentation.utils.asString
+import com.example.mazadytask.presentation.utils.observer.ConnectivityObserver
 import com.example.mazadytask.presentation.utils.toErrorTitle
 
 @Composable
@@ -72,6 +74,7 @@ fun LaunchDetailsScreenRoute(
             viewModel.effects.collect { effect ->
                 when (effect) {
                     is MviEffect.Navigate -> onNavigate(effect.screen)
+
                     is MviEffect.OnErrorDialog -> {
                         errorMessage = effect.errorMessage.asString(context = context)
                         errorType = effect.errorType
@@ -81,7 +84,6 @@ fun LaunchDetailsScreenRoute(
             }
         }
     }
-
 
     ErrorDialog(
         visible = isErrorDialogVisible,

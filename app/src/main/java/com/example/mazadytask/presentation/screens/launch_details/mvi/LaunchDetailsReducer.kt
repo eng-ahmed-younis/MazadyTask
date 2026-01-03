@@ -32,6 +32,12 @@ class LaunchDetailsReducer : Reducer<LaunchDetailsAction, LaunchDetailsState> {
                     noLaunchDetails = action.noLaunch
                 )
             }
+
+            is LaunchDetailsAction.OnNetworkStateChanged -> {
+                state.copy(
+                    networkState = action.state
+                )
+            }
         }
     }
 }

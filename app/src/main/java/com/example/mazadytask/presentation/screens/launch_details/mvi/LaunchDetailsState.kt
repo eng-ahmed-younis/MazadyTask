@@ -12,5 +12,6 @@ data class LaunchDetailsState(
     val noLaunchDetails: Boolean = false,
     val details: LaunchDetails? = null,
     val errorType: UiErrorType? = null,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val networkState: ConnectivityObserver.State = ConnectivityObserver.State.UnAvailable
 ) : MviState

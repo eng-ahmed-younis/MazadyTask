@@ -1,6 +1,7 @@
 package com.example.mazadytask.presentation.screens.launch_details
 
 import androidx.lifecycle.viewModelScope
+import com.example.mazadytask.R
 import com.example.mazadytask.di.dispatcher.DispatchersProvider
 import com.example.mazadytask.di.factory.LaunchDetailsParams
 import com.example.mazadytask.di.factory.LaunchDetailsViewModelFactory
@@ -15,10 +16,15 @@ import com.example.mazadytask.presentation.screens.launch_details.mvi.LaunchDeta
 import com.example.mazadytask.presentation.screens.launch_details.mvi.LaunchDetailsReducer
 import com.example.mazadytask.presentation.screens.launch_details.mvi.LaunchDetailsState
 import com.example.mazadytask.presentation.utils.UiErrorType
+import com.example.mazadytask.presentation.utils.UiText
+import com.example.mazadytask.presentation.utils.observer.ConnectivityObserver
+import com.example.mazadytask.presentation.utils.observer.NetworkStatus
+import com.example.mazadytask.presentation.utils.observer.isOffline
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
@@ -28,15 +34,18 @@ import kotlinx.coroutines.flow.onStart
 @HiltViewModel(assistedFactory = LaunchDetailsViewModelFactory::class)
 class LaunchDetailsViewModel @AssistedInject constructor(
     private val getLaunchDetailsUseCase: GetLaunchDetailsUseCase,
+    private val connectivityObserver: ConnectivityObserver,
     private val dispatchers: DispatchersProvider,
     @Assisted private val params: LaunchDetailsParams
 ) : MviBaseViewModel<LaunchDetailsState, LaunchDetailsAction, LaunchDetailsIntent>(
     initialState = LaunchDetailsState(),
     reducer = LaunchDetailsReducer()
 ) {
+    private var hasLoadedOnce = false
 
     init {
-        loadLaunchDetails()
+        observeNetwork()
+        //  loadLaunchDetails()
     }
 
     override fun handleIntent(intent: LaunchDetailsIntent) {
@@ -107,4 +116,36 @@ class LaunchDetailsViewModel @AssistedInject constructor(
             }
         }
     }
+    private fun observeNetwork() {
+        NetworkStatus.observeAsState(
+            connectivityObserver = connectivityObserver,
+            scope = viewModelScope
+        ).distinctUntilChangedBy { it.isOffline() }
+            .onEach { state ->
+                onAction(
+                    LaunchDetailsAction.OnNetworkStateChanged(state)
+                )
+
+                if (state.isOffline()) {
+                    onEffect(
+                        MviEffect.OnErrorDialog(
+                            errorType = UiErrorType.Network(null),
+                            errorMessage = UiText.Resource(
+                                R.string.no_internet_connection
+                            )
+                        )
+                    )
+                } else {
+                    if (!hasLoadedOnce) {
+                        hasLoadedOnce = true
+                        loadLaunchDetails()
+                    }
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
+
+
+
 }

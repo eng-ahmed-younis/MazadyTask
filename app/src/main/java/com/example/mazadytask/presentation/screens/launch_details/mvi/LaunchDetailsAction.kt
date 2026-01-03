@@ -20,4 +20,8 @@ sealed interface LaunchDetailsAction : MviAction {
     ) : LaunchDetailsAction
     data class OnError(val message: String) : LaunchDetailsAction
 
+
+    data class OnNetworkStateChanged(
+        val state: ConnectivityObserver.State
+    ) : LaunchDetailsAction
 }

@@ -30,7 +30,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LaunchListViewModel @Inject constructor(
     private val getLaunchesUseCase: GetLaunchesPagingUseCase,
-    connectivityObserver: ConnectivityObserver,
+    private val connectivityObserver: ConnectivityObserver,
     private val dispatchers: DispatchersProvider
 ) : MviBaseViewModel<LaunchListState, LaunchListAction, LaunchListIntent>(
     initialState = LaunchListState(),
@@ -38,7 +38,7 @@ class LaunchListViewModel @Inject constructor(
 ) {
 
     init {
-        observeNetwork(connectivityObserver)
+        observeNetwork()
     }
 
     val launchesPagingFlow: Flow<PagingData<LaunchListItem>> by lazy {
@@ -72,11 +72,9 @@ class LaunchListViewModel @Inject constructor(
     }
 
 
-    private fun observeNetwork(
-        observer: ConnectivityObserver
-    ) {
+    private fun observeNetwork() {
         NetworkStatus.observeAsState(
-            connectivityObserver = observer,
+            connectivityObserver = connectivityObserver,
             scope = viewModelScope
         ).onEach { state ->
             onAction(
