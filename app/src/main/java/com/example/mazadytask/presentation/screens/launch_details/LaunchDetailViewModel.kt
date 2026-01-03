@@ -1,6 +1,7 @@
 package com.example.mazadytask.presentation.screens.launch_details
 
 import androidx.lifecycle.viewModelScope
+import com.example.mazadytask.di.dispatcher.DispatchersProvider
 import com.example.mazadytask.di.factory.LaunchDetailsParams
 import com.example.mazadytask.di.factory.LaunchDetailsViewModelFactory
 import com.example.mazadytask.domain.model.AppError
@@ -18,6 +19,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
@@ -26,6 +28,7 @@ import kotlinx.coroutines.flow.onStart
 @HiltViewModel(assistedFactory = LaunchDetailsViewModelFactory::class)
 class LaunchDetailsViewModel @AssistedInject constructor(
     private val getLaunchDetailsUseCase: GetLaunchDetailsUseCase,
+    private val dispatchers: DispatchersProvider,
     @Assisted private val params: LaunchDetailsParams
 ) : MviBaseViewModel<LaunchDetailsState, LaunchDetailsAction, LaunchDetailsIntent>(
     initialState = LaunchDetailsState(),
@@ -47,6 +50,7 @@ class LaunchDetailsViewModel @AssistedInject constructor(
 
     private fun loadLaunchDetails() {
         getLaunchDetailsUseCase(params.launchId)
+            .flowOn(dispatchers.io)
             .onStart {
                 onAction(LaunchDetailsAction.OnLoading(true))
             }
@@ -56,7 +60,10 @@ class LaunchDetailsViewModel @AssistedInject constructor(
                         onAction(LaunchDetailsAction.OnLaunchesSuccess(it.data))
                     }
 
-                    is AppResult.Error -> handleLaunchDetailsError(error = it)
+                    is AppResult.Error ->{
+                        handleLaunchDetailsError(error = it)
+                        onAction(LaunchDetailsAction.NoLaunchDetails(noLaunch = true))
+                    }
                 }
             }
             .catch { error ->
@@ -90,7 +97,6 @@ class LaunchDetailsViewModel @AssistedInject constructor(
                 )
             }
             is AppError.Unknown -> {
-                error
                 onAction(
                     LaunchDetailsAction.OnLaunchesError(
                         errorType = UiErrorType.Unknown(
@@ -99,7 +105,6 @@ class LaunchDetailsViewModel @AssistedInject constructor(
                     )
                 )
             }
-
         }
     }
 }

@@ -11,14 +11,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
@@ -35,9 +38,15 @@ import com.example.mazadytask.presentation.screens.composables.LaunchList
 import com.example.mazadytask.presentation.screens.composables.LoadingDialog
 import com.example.mazadytask.presentation.screens.composables.paging.EmptyState
 import com.example.mazadytask.presentation.screens.launch_list.mvi.LaunchListIntent
+import com.example.mazadytask.presentation.screens.launch_list.mvi.LaunchListState
 import com.example.mazadytask.presentation.ui.theme.LocalLaunchColors
 import com.example.mazadytask.presentation.ui.theme.MazadyAppTheme
 import com.example.mazadytask.presentation.utils.PagingErrorDialogHandler
+import com.example.mazadytask.presentation.utils.UiErrorType
+import com.example.mazadytask.presentation.utils.asString
+import com.example.mazadytask.presentation.utils.observer.ConnectivityObserver
+import com.example.mazadytask.presentation.utils.toErrorTitle
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 
 @Composable
@@ -45,13 +54,14 @@ fun LaunchListScreenRoute(
     onNavigate: (Screens) -> Unit = {}
 ) {
     val viewModel: LaunchListViewModel = hiltViewModel()
+    val context = LocalContext.current
     val state = viewModel.viewState
     val pagingItems = viewModel.launchesPagingFlow.collectAsLazyPagingItems()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    var errorMessage by rememberSaveable { mutableStateOf<String?>(null) }
-    var isErrorDialogVisible by rememberSaveable { mutableStateOf(false) }
-
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var errorType by remember { mutableStateOf<UiErrorType?>(null) }
+    var isErrorDialogVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(lifecycle) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -61,7 +71,8 @@ fun LaunchListScreenRoute(
                         onNavigate(effect.screen)
                     }
                     is MviEffect.OnErrorDialog -> {
-                        errorMessage = effect.error
+                        errorMessage = effect.errorMessage.asString(context = context)
+                        errorType = effect.errorType
                         isErrorDialogVisible = true
                     }
                 }
@@ -77,13 +88,13 @@ fun LaunchListScreenRoute(
     ErrorDialog(
         visible = isErrorDialogVisible,
         message = errorMessage.orEmpty(),
+        title = errorType?.toErrorTitle(context),
         onDismiss = { isErrorDialogVisible = false }
     )
 
-    LoadingDialog(visible = state.isLoading)
-
     LaunchListScreen(
         pagingItems = pagingItems,
+        state = state,
         onIntent = viewModel::onIntent
     )
 }
@@ -92,17 +103,45 @@ fun LaunchListScreenRoute(
 @Composable
 fun LaunchListScreen(
     pagingItems: LazyPagingItems<LaunchListItem>,
+    state: LaunchListState,
     onIntent: (LaunchListIntent) -> Unit
 ) {
     val colors = LocalLaunchColors.current
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
-        rememberTopAppBarState()
-    )
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    var previousNetworkState by remember { mutableStateOf<ConnectivityObserver.State?>(null) }
 
+    LaunchedEffect(state.networkState) {
+        val currentState = state.networkState
+        val wasOffline = previousNetworkState == ConnectivityObserver.State.UnAvailable ||
+                previousNetworkState == ConnectivityObserver.State.Lost
 
-    LaunchedEffect(Unit) {
-        onIntent(LaunchListIntent.LoadLaunches)
+        when (currentState) {
+            ConnectivityObserver.State.Available -> {
+                when {
+                    // Case 1: Network just became available after being offline
+                    wasOffline -> {
+                        if (pagingItems.itemCount == 0) {
+                            // No items loaded yet - trigger fresh load
+                            pagingItems.refresh()
+                        } else {
+                            // Had items before - just retry failed requests
+                            pagingItems.retry()
+                        }
+                    }
+                    // Case 2: First time loading with network available
+                    previousNetworkState == null && pagingItems.itemCount == 0 -> {
+                        pagingItems.refresh()
+                    }
+                }
+            }
+            else -> Unit
+        }
+
+        previousNetworkState = currentState
     }
+
+
+    LoadingDialog(visible = state.isLoading)
 
     Scaffold(
         modifier = Modifier
@@ -168,7 +207,8 @@ fun LaunchListScreenPreview(){
     MazadyAppTheme{
         LaunchListScreen(
             pagingItems = pagingItems,
-            onIntent = {}
+            onIntent = {},
+            state = LaunchListState()
         )
     }
 }

@@ -14,7 +14,7 @@ class LaunchListReducer : Reducer<LaunchListAction, LaunchListState> {
                     isLoading = action.isLoading
                 )
             }
-
+            is LaunchListAction.OnNetworkStateChanged -> state.copy(networkState = action.state)
 
             else -> state
         }

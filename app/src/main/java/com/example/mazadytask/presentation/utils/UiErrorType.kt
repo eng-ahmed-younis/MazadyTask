@@ -1,5 +1,6 @@
 package com.example.mazadytask.presentation.utils
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.example.mazadytask.R
@@ -29,10 +30,8 @@ fun Throwable?.toUiErrorType(): UiErrorType? {
     }
 }
 
-/**
- * Composable function that returns a localized error message.
- * Uses string resources as fallback when server message is null/blank.
- */
+
+// return error type and message
 @Composable
 fun Throwable?.toLocalizedErrorTitleAndMessage(): Pair<String, String> {
     return when (val errorType = this.toUiErrorType()) {
@@ -58,5 +57,16 @@ fun Throwable?.toLocalizedErrorTitleAndMessage(): Pair<String, String> {
             stringResource(R.string.unknown_error_type) to
                     stringResource(R.string.error_unknown)
         }
+    }
+}
+
+
+fun UiErrorType.toErrorTitle(
+    context: Context
+): String {
+    return when(this){
+        is UiErrorType.Network -> context.getString(R.string.network_error_type)
+        is UiErrorType.Server -> context.getString(R.string.server_error_type)
+        is UiErrorType.Unknown -> context.getString(R.string.unknown_error_type)
     }
 }

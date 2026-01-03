@@ -8,7 +8,6 @@ import kotlinx.serialization.Serializable
 @Stable
 interface Screens {
 
-
     @Serializable
     data class Back(
         val payload: Map<String, String>? = null

@@ -22,7 +22,14 @@ class LaunchDetailsReducer : Reducer<LaunchDetailsAction, LaunchDetailsState> {
             }
             is LaunchDetailsAction.OnLaunchesSuccess -> {
                 state.copy(
-                    details = action.details
+                    details = action.details,
+                    noLaunchDetails = action.details.id.isEmpty()
+                )
+            }
+
+            is LaunchDetailsAction.NoLaunchDetails -> {
+                state.copy(
+                    noLaunchDetails = action.noLaunch
                 )
             }
         }

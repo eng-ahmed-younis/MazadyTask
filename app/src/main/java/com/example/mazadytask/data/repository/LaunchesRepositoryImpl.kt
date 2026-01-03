@@ -4,19 +4,15 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.api.Optional
 import com.example.mazadytask.data.mappers.toAppError
 import com.example.mazadytask.data.mappers.toDomainLaunchDetails
-import com.example.mazadytask.data.mappers.toDomainLaunchListPage
 import com.example.mazadytask.data.paging.LaunchesPagingSource
 import com.example.mazadytask.domain.model.AppError
 import com.example.mazadytask.domain.model.AppResult
 import com.example.mazadytask.domain.model.LaunchDetails
 import com.example.mazadytask.domain.model.LaunchListItem
-import com.example.mazadytask.domain.model.Page
 import com.example.mazadytask.domain.repository.LaunchesRepository
 import com.example.mazadytask.graphql.LaunchDetailsQuery
-import com.example.mazadytask.graphql.LaunchListQuery
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

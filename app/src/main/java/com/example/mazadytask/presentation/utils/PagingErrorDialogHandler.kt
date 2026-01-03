@@ -10,7 +10,9 @@ import com.example.mazadytask.presentation.screens.composables.ErrorDialog
 fun <T : Any> PagingErrorDialogHandler(
     items: LazyPagingItems<T>,
     onDismiss: () -> Unit = {},
-    onRetry: () -> Unit = { items.retry() }
+    onRetry: () -> Unit = {
+        if (items.itemCount > 0 ) items.retry() else items.refresh()
+    }
 ) {
     // Get error from paging (refresh or append)
     val throwable: Throwable? = remember(items.loadState) {
@@ -35,6 +37,9 @@ fun <T : Any> PagingErrorDialogHandler(
             onDismiss = {
                 showDialog = false
                 onDismiss()
+            },
+            onConfirm = {
+                onRetry()
             }
         )
     }

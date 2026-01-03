@@ -22,6 +22,7 @@ fun ErrorDialog(
     message: String,
     title: String? = null ,
     onDismiss: () -> Unit,
+    onConfirm: () -> Unit = {}
 ) {
     CustomConfirmDialog(
         visible = visible,

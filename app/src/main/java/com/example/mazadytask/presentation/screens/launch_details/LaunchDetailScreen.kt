@@ -20,10 +20,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,6 +44,9 @@ import com.example.mazadytask.presentation.screens.composables.LoadingDialog
 import com.example.mazadytask.presentation.screens.launch_details.mvi.LaunchDetailsIntent
 import com.example.mazadytask.presentation.screens.launch_details.mvi.LaunchDetailsState
 import com.example.mazadytask.presentation.ui.theme.LocalLaunchColors
+import com.example.mazadytask.presentation.utils.UiErrorType
+import com.example.mazadytask.presentation.utils.asString
+import com.example.mazadytask.presentation.utils.toErrorTitle
 
 @Composable
 fun LaunchDetailsScreenRoute(
@@ -54,20 +59,22 @@ fun LaunchDetailsScreenRoute(
         }
 
     val state = viewModel.viewState
+    val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    var errorMessage by rememberSaveable { mutableStateOf<String?>(null) }
-    var isErrorDialogVisible by rememberSaveable { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var errorType by remember { mutableStateOf<UiErrorType?>(null) }
+    var isErrorDialogVisible by remember { mutableStateOf(false) }
 
 
-    // Collect MVI effects
     LaunchedEffect(lifecycle) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effects.collect { effect ->
                 when (effect) {
                     is MviEffect.Navigate -> onNavigate(effect.screen)
                     is MviEffect.OnErrorDialog -> {
-                        errorMessage = effect.error
+                        errorMessage = effect.errorMessage.asString(context = context)
+                        errorType = effect.errorType
                         isErrorDialogVisible = true
                     }
                 }
@@ -79,11 +86,9 @@ fun LaunchDetailsScreenRoute(
     ErrorDialog(
         visible = isErrorDialogVisible,
         message = errorMessage.orEmpty(),
+        title = errorType?.toErrorTitle(context),
         onDismiss = { isErrorDialogVisible = false }
     )
-
-    // Loading dialog
-    LoadingDialog(visible = state.isLoading && state.details != null)
 
     LaunchDetailsScreen(
         state = state,
@@ -109,7 +114,6 @@ fun LaunchDetailsScreen(
                 title = {
                     Text(
                         text = state.details?.missionName ?: "",
-                           // ?: stringResource(R.string.screen_title_launch_details),
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -134,21 +138,13 @@ fun LaunchDetailsScreen(
         },
         containerColor = colors.surfaceBackground
     ) { paddingValues ->
-       /* when {
-
-
-              // Success state
-                state.details != null -> {
-                    DetailsContent(
-                        state = state,
-                        paddingValues = paddingValues
-                    )
-                }
-        }*/
-        DetailsContent(
-            state = state,
-            paddingValues = paddingValues
-        )
+        when{
+            state.noLaunchDetails -> EmptyLaunch()
+            else -> DetailsContent(
+                state = state,
+                paddingValues = paddingValues
+            )
+        }
     }
 }
 
