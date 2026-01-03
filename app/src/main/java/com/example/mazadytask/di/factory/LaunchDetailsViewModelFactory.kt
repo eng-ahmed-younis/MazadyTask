@@ -1,4 +1,4 @@
-package com.example.mazadytask.di.di
+package com.example.mazadytask.di.factory
 
 import com.example.mazadytask.presentation.screens.launch_details.LaunchDetailsViewModel
 import dagger.assisted.AssistedFactory

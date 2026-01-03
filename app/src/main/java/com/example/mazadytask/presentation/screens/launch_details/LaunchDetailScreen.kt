@@ -32,8 +32,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.mazadytask.di.di.LaunchDetailsParams
-import com.example.mazadytask.di.di.LaunchDetailsViewModelFactory
+import com.example.mazadytask.di.factory.LaunchDetailsParams
+import com.example.mazadytask.di.factory.LaunchDetailsViewModelFactory
 import com.example.mazadytask.domain.model.LaunchDetails
 import com.example.mazadytask.presentation.base.Screens
 import com.example.mazadytask.presentation.base.mvi.MviEffect

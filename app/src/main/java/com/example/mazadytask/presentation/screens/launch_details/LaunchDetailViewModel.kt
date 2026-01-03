@@ -1,8 +1,8 @@
 package com.example.mazadytask.presentation.screens.launch_details
 
 import androidx.lifecycle.viewModelScope
-import com.example.mazadytask.di.di.LaunchDetailsParams
-import com.example.mazadytask.di.di.LaunchDetailsViewModelFactory
+import com.example.mazadytask.di.factory.LaunchDetailsParams
+import com.example.mazadytask.di.factory.LaunchDetailsViewModelFactory
 import com.example.mazadytask.domain.model.AppError
 import com.example.mazadytask.domain.model.AppResult
 import com.example.mazadytask.domain.usecase.GetLaunchDetailsUseCase
@@ -18,13 +18,10 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.selects.whileSelect
 
 @HiltViewModel(assistedFactory = LaunchDetailsViewModelFactory::class)
 class LaunchDetailsViewModel @AssistedInject constructor(
