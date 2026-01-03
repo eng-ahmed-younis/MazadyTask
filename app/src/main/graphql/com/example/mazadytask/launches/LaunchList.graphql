@@ -1,0 +1,28 @@
+query LaunchList(
+    $after: String,
+    $pageSize: Int! # default = 20
+) {
+    launches(
+        after: $after,
+        pageSize: $pageSize
+    ) {
+        cursor
+        hasMore
+        launches {
+            id
+            site
+            isBooked
+            mission {
+                name
+                missionPatch(size: SMALL)
+            }
+            rocket {
+                id
+                name
+            }
+        }
+    }
+
+}
+
+

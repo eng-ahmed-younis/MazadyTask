@@ -1,4 +1,4 @@
-package com.example.mazadytask
+package com.example.mazadytask.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,7 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.mazadytask.presentation.ui.theme.MazadyTaskTheme
+import com.example.mazadytask.presentation.navigation.AppNavHost
+import com.example.mazadytask.presentation.ui.theme.MazadyAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -21,13 +22,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MazadyTaskTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+            MazadyAppTheme {
+                AppNavHost()
             }
         }
     }
@@ -44,7 +40,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    MazadyTaskTheme {
+    MazadyAppTheme {
         Greeting("Android")
     }
 }

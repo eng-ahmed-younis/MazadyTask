@@ -6,6 +6,7 @@ plugins {
 
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt)
+    id("org.jetbrains.kotlin.plugin.serialization") // Apply the plugin
 }
 
 android {
@@ -117,8 +118,15 @@ dependencies {
     // hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
-
     kapt(libs.hilt.compiler)
+
+
+    // paging
+    implementation("androidx.paging:paging-compose:3.3.6")
+    implementation("androidx.paging:paging-runtime-ktx:3.3.6")
+
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3") // Add the JSON library
 }
 
 
