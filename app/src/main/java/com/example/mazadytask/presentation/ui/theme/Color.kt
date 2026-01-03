@@ -7,6 +7,7 @@ internal val lightColors = AppColors(
     // Backgrounds
     screenBackground = Color(0xFFFFFFFF),
     cardBackground = Color(0xFFE5E5EA),
+    topBarBackground = Color(0xFFDCDCDC),
     surfaceBackground = Color(0xFFF2F2F7),
 
     // Text Colors
@@ -31,6 +32,7 @@ internal val darkColors = AppColors(
     // Backgrounds
     screenBackground = Color(0xFF1C1C1E),
     cardBackground = Color(0xFF2C2C2E),
+    topBarBackground = Color(0xFF414141),
     surfaceBackground = Color(0xFF000000),
 
     // Text Colors
@@ -56,6 +58,7 @@ data class AppColors(
     // Backgrounds
     val screenBackground: Color,
     val cardBackground: Color,
+    val topBarBackground: Color,
     val surfaceBackground: Color,
 
     // Text Colors

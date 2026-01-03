@@ -120,13 +120,21 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     kapt(libs.hilt.compiler)
 
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+    // The old "io.coil-kt:coil:0.9.1" dependency has been removed.
 
-    // paging
-    implementation("androidx.paging:paging-compose:3.3.6")
-    implementation("androidx.paging:paging-runtime-ktx:3.3.6")
+    // Material Icons
+    implementation(libs.androidx.material.icons.extended)
 
+    // Paging
+    implementation(libs.androidx.paging.compose)
+    implementation(libs.androidx.paging.runtime.ktx)
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3") // Add the JSON library
+    // Kotlinx Serialization
+    implementation(libs.kotlinx.serialization.json)
+
+    
 }
 
 

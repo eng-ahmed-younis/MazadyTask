@@ -1,3 +1,36 @@
+<!-- res/values/strings.xml -->
 <resources>
     <string name="app_name">MazadyTask</string>
+
+    <!-- Error messages (fallbacks when server returns null) -->
+    <string name="error_network">No internet connection</string>
+    <string name="error_server">Server error occurred</string>
+    <string name="error_unknown">Something went wrong</string>
+    
+    <string name="network_error_type">Network Error</string>
+    <string name="server_error_type">Server Error</string>
+    <string name="unknown_error_type">Unknown Error</string>
+
+    <!-- Action buttons -->
+    <string name="action_retry">Retry</string>
+    <string name="action_ok">OK</string>
+    <string name="action_cancel">Cancel</string>
+
+    <!-- Loading states -->
+    <string name="loading_launches">Loading launches…</string>
+    <string name="error_loading_more">Error loading more</string>
+    <string name="failed_load_launches">Failed to load launches</string>
+
+    <!-- Empty state -->
+    <string name="no_launches_available">No launches available</string>
+    <string name="check_back_later">Check back later for updates</string>
+
+    <!-- Launch List Screen -->
+    <string name="screen_title_launches">Launches</string>
+
+    <!-- Launch Details Screen -->
+    <string name="screen_title_launch_details">Launch Details</string>
+
+    <!-- Error Dialog -->
+    <string name="dialog_title_error">Error</string>
 </resources>

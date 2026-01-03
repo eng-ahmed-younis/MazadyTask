@@ -1,4 +1,4 @@
-package com.example.mazadytask.presentation.screens.launch_list.composables
+package com.example.mazadytask.presentation.screens.composables
 
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -20,11 +20,12 @@ import androidx.compose.ui.window.DialogProperties
 fun ErrorDialog(
     visible: Boolean,
     message: String,
+    title: String? = null ,
     onDismiss: () -> Unit,
 ) {
     CustomConfirmDialog(
         visible = visible,
-        title = "Error",
+        title = title ?: "Error",
         message = message,
         confirmText = "OK",
         dismissText = "Cancel", // or keep it, or hide it if you add a flag

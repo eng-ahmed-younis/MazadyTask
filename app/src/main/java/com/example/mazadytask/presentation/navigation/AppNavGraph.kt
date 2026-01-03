@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.example.mazadytask.di.di.LaunchDetailsParams
+import com.example.mazadytask.presentation.screens.launch_details.LaunchDetailsScreenRoute
 import com.example.mazadytask.presentation.screens.launch_list.LaunchListScreenRoute
 
 @Composable
@@ -28,17 +30,18 @@ fun AppNavHost(
             )
         }
 
-  /*      composable<MazadyScreens.LaunchDetails> { entry ->
-            val args = entry.toRoute<MazadyScreens.LaunchDetails>()
-         //   val vm = hiltViewModel<com.example.mazadytask.presentation.screens.launch_details.LaunchDetailViewModel>()
-
-        *//*    LaunchDetailsScreen(
+        composable<MazadyScreens.LaunchDetails> { backStackEntry ->
+            val args = backStackEntry.toRoute<MazadyScreens.LaunchDetails>()
+            val launchDetailsScreenParams = LaunchDetailsParams(
                 launchId = args.launchId,
-                viewModel = vm,
+            )
+
+            LaunchDetailsScreenRoute(
+                params = launchDetailsScreenParams,
                 onNavigate = { screen ->
                     navController.navigateTo(screen)
                 }
-            )*//*
-        }*/
+            )
+        }
     }
 }

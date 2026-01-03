@@ -15,11 +15,6 @@ class LaunchListReducer : Reducer<LaunchListAction, LaunchListState> {
                 )
             }
 
-            is LaunchListAction.PagingDataLoaded -> {
-                state.copy(
-                    launchesPaging = action.data
-                )
-            }
 
             else -> state
         }

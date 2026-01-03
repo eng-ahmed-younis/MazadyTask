@@ -1,20 +1,21 @@
 package com.example.mazadytask.presentation.screens.launch_list
 
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.mazadytask.di.dispatcher.DispatchersProvider
+import com.example.mazadytask.domain.model.LaunchListItem
 import com.example.mazadytask.domain.usecase.GetLaunchesPagingUseCase
 import com.example.mazadytask.presentation.base.mvi.MviBaseViewModel
 import com.example.mazadytask.presentation.base.mvi.MviEffect
+import com.example.mazadytask.presentation.navigation.MazadyScreens
+import com.example.mazadytask.presentation.screens.launch_list.mvi.LaunchListAction
 import com.example.mazadytask.presentation.screens.launch_list.mvi.LaunchListIntent
 import com.example.mazadytask.presentation.screens.launch_list.mvi.LaunchListReducer
 import com.example.mazadytask.presentation.screens.launch_list.mvi.LaunchListState
-import com.example.mazadytask.presentation.screens.launch_list.mvi.LaunchListAction
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 
@@ -27,37 +28,45 @@ class LaunchListViewModel @Inject constructor(
     reducer = LaunchListReducer()
 ) {
 
+    val launchesPagingFlow: Flow<PagingData<LaunchListItem>> by lazy {
+        println("🔥 LAZY BLOCK EXECUTING NOW!")  // ✅ This fires in step 4
+        onAction(LaunchListAction.OnLoading(true))
+
+        val flow = getLaunchesUseCase(pageSize = 20)
+            .catch { error ->
+                onAction(LaunchListAction.OnLoading(false))
+                onEffect(
+                    MviEffect.OnErrorDialog(
+                        error = error.message ?: "Failed to load launches"
+                    )
+                )
+            }
+            .cachedIn(viewModelScope)
+
+        onAction(LaunchListAction.OnLoading(false))
+        println("🔥 LAZY BLOCK FINISHED!")
+        flow
+    }
+
+
     override fun handleIntent(intent: LaunchListIntent) {
 
         when (intent) {
-            is LaunchListIntent.LoadLaunches -> {
-                loadLaunches()
-            }
+            is LaunchListIntent.LoadLaunches -> launchesPagingFlow
+            is LaunchListIntent.OnLaunchClicked -> onEffect(
+                MviEffect.Navigate(
+                    MazadyScreens.LaunchDetails(intent.launchId)
+                )
+            )
 
-            else -> {
-
-            }
+            else -> {}
         }
 
+
     }
 
 
-    private fun loadLaunches(pageSize: Int = 20) {
-        getLaunchesUseCase(pageSize)
-            .onStart {
-                onAction(LaunchListAction.OnLoading(true))
-            }
-            .onEach {
-                onAction(LaunchListAction.PagingDataLoaded(data = it))
-            }
-            .catch { error ->
-                onEffect(MviEffect.OnErrorDialog(error = error.message ?: ""))
-            }
-            .onCompletion {
-                onAction(LaunchListAction.OnLoading(false))
-            }
-            .launchIn(viewModelScope)
-    }
 
 
 }
+

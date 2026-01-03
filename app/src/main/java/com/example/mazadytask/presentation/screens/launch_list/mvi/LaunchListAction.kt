@@ -7,6 +7,6 @@ import androidx.paging.PagingData
 
 sealed interface LaunchListAction : MviAction {
     data class OnLoading(val isLoading: Boolean) : LaunchListAction
-    data class PagingDataLoaded(val data: PagingData<LaunchListItem>) : LaunchListAction
+  //  data class PagingDataLoaded(val data: PagingData<LaunchListItem>) : LaunchListAction
     data class Error(val message: String) : LaunchListAction
 }
