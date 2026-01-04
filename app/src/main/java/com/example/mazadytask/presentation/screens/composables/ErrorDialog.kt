@@ -10,10 +10,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.example.mazadytask.R
+import com.example.mazadytask.presentation.utils.spacing.AppSpacing
 
 
 @Composable
@@ -21,16 +24,16 @@ fun ErrorDialog(
     visible: Boolean,
     message: String,
     title: String? = null ,
-    onDismiss: () -> Unit,
+    onDismiss: () -> Unit = {},
     onConfirm: () -> Unit = {}
 ) {
     CustomConfirmDialog(
         visible = visible,
-        title = title ?: "Error",
+        title = title ?: stringResource(R.string.dialog_error_title),
         message = message,
-        confirmText = "OK",
-        dismissText = "Cancel", // or keep it, or hide it if you add a flag
-        onConfirm = onDismiss,
+        confirmText = stringResource(R.string.action_ok),
+        dismissText = stringResource(R.string.action_cancel),
+        onConfirm = onConfirm,
         onDismiss = onDismiss,
         dismissOnOutsideClick = true
     )
@@ -42,7 +45,7 @@ fun CustomConfirmDialog(
     title: String,
     message: String,
     confirmText: String,
-    dismissText: String = "Cancel",
+    dismissText: String = stringResource(R.string.action_cancel),
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     dismissOnOutsideClick: Boolean = true
@@ -54,7 +57,7 @@ fun CustomConfirmDialog(
         properties = DialogProperties(
             dismissOnBackPress = true,
             dismissOnClickOutside = dismissOnOutsideClick,
-            usePlatformDefaultWidth = false // مهم: عشان نتحكم في التمركز/العرض
+            usePlatformDefaultWidth = false
         )
     ) {
         Box(
@@ -62,15 +65,17 @@ fun CustomConfirmDialog(
             contentAlignment = Alignment.Center
         ) {
             Surface(
-                shape = RoundedCornerShape(28.dp),
+                shape = RoundedCornerShape(AppSpacing.space_24),
                 color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
-                tonalElevation = 6.dp,
-                shadowElevation = 14.dp,
+                tonalElevation = AppSpacing.space_8,
+                shadowElevation = AppSpacing.space_12,
                 modifier = Modifier
-                    .fillMaxWidth(0.9f)      // عرض مناسب في النص
-                    .wrapContentHeight()     // ارتفاع حسب المحتوى
+                    .fillMaxWidth(0.9f)
+                    .wrapContentHeight()
             ) {
-                Column(modifier = Modifier.padding(24.dp)) {
+                Column(
+                    modifier = Modifier.padding(AppSpacing.space_24)
+                ) {
 
                     Text(
                         text = title,
@@ -78,7 +83,7 @@ fun CustomConfirmDialog(
                         fontWeight = FontWeight.SemiBold
                     )
 
-                    Spacer(Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(AppSpacing.space_12))
 
                     Text(
                         text = message,
@@ -86,23 +91,27 @@ fun CustomConfirmDialog(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
-                    Spacer(Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(AppSpacing.space_24))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.End
                     ) {
+
                         TextButton(onClick = onDismiss) {
                             Text(dismissText)
                         }
 
-                        Spacer(Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(AppSpacing.space_12))
 
                         Button(
                             onClick = onConfirm,
-                            shape = RoundedCornerShape(999.dp),
-                            contentPadding = PaddingValues(horizontal = 22.dp, vertical = 10.dp)
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(
+                                horizontal = AppSpacing.space_24,
+                                vertical = AppSpacing.space_12
+                            )
                         ) {
                             Text(confirmText)
                         }

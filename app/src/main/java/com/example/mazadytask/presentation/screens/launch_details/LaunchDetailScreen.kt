@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,6 +49,7 @@ import com.example.mazadytask.presentation.ui.theme.LocalLaunchColors
 import com.example.mazadytask.presentation.utils.UiErrorType
 import com.example.mazadytask.presentation.utils.asString
 import com.example.mazadytask.presentation.utils.observer.ConnectivityObserver
+import com.example.mazadytask.presentation.utils.spacing.AppSpacing
 import com.example.mazadytask.presentation.utils.toErrorTitle
 
 @Composable
@@ -110,7 +112,8 @@ fun LaunchDetailsScreen(
     LoadingDialog(visible = state.isLoading)
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         topBar = {
             TopAppBar(
                 title = {
@@ -152,7 +155,7 @@ fun LaunchDetailsScreen(
 
 @Composable
 fun EmptyLaunch(
-    text: String = "No launch data available",
+    text: String = stringResource(R.string.no_launch_data),
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -161,7 +164,7 @@ fun EmptyLaunch(
             .height(120.dp)
             .background(
                 color = MaterialTheme.colorScheme.surfaceVariant,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(AppSpacing.space_16)
             ),
         contentAlignment = Alignment.Center
     ) {

@@ -17,18 +17,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.mazadytask.R
 import com.example.mazadytask.presentation.ui.theme.LocalLaunchColors
+import com.example.mazadytask.presentation.utils.spacing.AppSpacing
 
 @Composable
 fun EmptyState(
+    modifier: Modifier = Modifier,
     paddingValues: PaddingValues
 ) {
     val colors = LocalLaunchColors.current
 
+
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(paddingValues)
             .background(colors.surfaceBackground),
@@ -36,7 +38,7 @@ fun EmptyState(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(24.dp)
+            modifier = Modifier.padding(AppSpacing.space_24)
         ) {
             Text(
                 text = stringResource(R.string.no_launches_available),
@@ -44,7 +46,9 @@ fun EmptyState(
                 color = colors.secondaryText,
                 fontWeight = FontWeight.SemiBold
             )
-            Spacer(Modifier.height(8.dp))
+
+            Spacer(modifier = Modifier.height(AppSpacing.space_8))
+
             Text(
                 text = stringResource(R.string.check_back_later),
                 style = MaterialTheme.typography.bodyMedium,

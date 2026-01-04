@@ -1,7 +1,5 @@
 package com.example.mazadytask.presentation.screens.composables
 
-import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,10 +9,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -22,80 +21,64 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
+import com.example.mazadytask.R
 import com.example.mazadytask.domain.model.LaunchListItem
 import com.example.mazadytask.presentation.ui.theme.LocalLaunchColors
 import com.example.mazadytask.presentation.ui.theme.MazadyAppTheme
+import com.example.mazadytask.presentation.utils.spacing.AppSpacing
 
 @Composable
 fun LaunchItem(
     modifier: Modifier = Modifier,
     launch: LaunchListItem,
-    onClick: () -> Unit = {},
+    onLaunchClick: () -> Unit = {},
 ) {
     val colors = LocalLaunchColors.current
+    val context = LocalContext.current
 
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .height(72.dp)
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp),
+            .height(AppSpacing.space_72)
+            .clickable(onClick = onLaunchClick),
+        shape = RoundedCornerShape(AppSpacing.space_12),
         color = colors.cardBackground,
         tonalElevation = 0.dp
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = AppSpacing.space_16),
             verticalAlignment = Alignment.CenterVertically
         ) {
 
             Box(
                 modifier = Modifier
-                    .size(56.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                contentAlignment = Alignment.Center,
+                    .size(AppSpacing.space_48)
+                    .clip(RoundedCornerShape(AppSpacing.space_12)),
+                contentAlignment = Alignment.Center
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .background(
-                           color = Color.Transparent
-                        )
-                )
-                Log.i("LaunchItem", "missionPatchUrl: ${launch.missionPatchUrl}")
-                launch.missionPatchUrl?.let {
 
-
-                    val context = LocalContext.current
-
+                launch.missionPatchUrl?.let { imageUrl ->
                     AsyncImage(
                         model = ImageRequest.Builder(context)
-                            .data(launch.missionPatchUrl)
-                            .listener(
-                                onError = { _, result ->
-                                    Log.e("LaunchItem", "Image load failed", result.throwable)
-                                }
-                            )
+                            .data(imageUrl)
                             .build(),
                         contentDescription = "Mission patch",
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(AppSpacing.space_48)
                     )
-
                 }
-
             }
 
-
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(AppSpacing.space_16))
 
             Column(
                 verticalArrangement = Arrangement.Center
@@ -106,8 +89,9 @@ fun LaunchItem(
                     fontWeight = FontWeight.SemiBold,
                     color = colors.primaryText
                 )
+                Spacer(modifier = Modifier.height(AppSpacing.space_4))
                 Text(
-                    text = launch.site ?: "Unknown site",
+                    text = launch.site ?: stringResource(R.string.unknown_site),
                     fontSize = 14.sp,
                     color = colors.secondaryText
                 )
@@ -115,6 +99,7 @@ fun LaunchItem(
         }
     }
 }
+
 
 
 @Composable

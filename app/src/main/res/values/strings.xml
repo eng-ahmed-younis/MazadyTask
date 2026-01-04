@@ -6,7 +6,7 @@
     <string name="error_network">No internet connection</string>
     <string name="error_server">Server error occurred</string>
     <string name="error_unknown">Something went wrong</string>
-    
+
     <string name="network_error_type">Network Error</string>
     <string name="server_error_type">Server Error</string>
     <string name="unknown_error_type">Unknown Error</string>
@@ -31,9 +31,36 @@
     <!-- Launch Details Screen -->
     <string name="screen_title_launch_details">Launch Details</string>
 
-    <!-- Error Dialog -->
+    <!-- error Dialog -->
     <string name="dialog_title_error">Error</string>
+    <string name="dialog_error_title">Error</string>
+
+
+    <!-- Content Descriptions -->
+    <string name="mission_patch">Mission patch</string>
+    <string name="cd_back">Back</string>
+
+    <!-- Empty states -->
+    <string name="no_launch_data">No launch data available</string>
+
+    <!-- Section Titles -->
+    <string name="section_rocket">Rocket</string>
+    <string name="section_mission">Mission</string>
+    <string name="section_site">Site</string>
+
+    <!-- Labels -->
+    <string name="label_name">NAME</string>
+    <string name="label_type">TYPE</string>
+    <string name="label_id">ID</string>
+
+    <!-- Fallback Values -->
+    <string name="value_unknown">Unknown</string>
+    <string name="value_not_available">N/A</string>
 
 
     <string name="no_internet_connection">No internet connection, enable and retry</string>
+
+
+
+    <string name="unknown_site">Unknown site</string>
 </resources>

@@ -26,6 +26,7 @@ import com.example.mazadytask.domain.model.LaunchListItem
 import com.example.mazadytask.presentation.screens.launch_list.mvi.LaunchListIntent
 import com.example.mazadytask.presentation.ui.theme.LocalLaunchColors
 import com.example.mazadytask.presentation.ui.theme.MazadyAppTheme
+import com.example.mazadytask.presentation.utils.spacing.AppSpacing
 import kotlinx.coroutines.flow.flowOf
 
 @Composable
@@ -37,12 +38,12 @@ fun LaunchList(
     val colors = LocalLaunchColors.current
 
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(AppSpacing.space_12),
         contentPadding = PaddingValues(
-            start = 16.dp,
-            end = 16.dp,
-            top = paddingValues.calculateTopPadding() + 8.dp,
-            bottom = paddingValues.calculateBottomPadding() + 16.dp
+            start = AppSpacing.space_16,
+            end = AppSpacing.space_16,
+            top = paddingValues.calculateTopPadding() + AppSpacing.space_8,
+            bottom = paddingValues.calculateBottomPadding() + AppSpacing.space_16
         ),
         modifier = Modifier
             .fillMaxSize()
@@ -58,19 +59,23 @@ fun LaunchList(
             val launch = pagingItems[index] ?: return@items
             LaunchItem(
                 launch = launch,
-                onClick = {
-                    onIntent(LaunchListIntent.OnLaunchClicked(launchId = launch.id))
+                onLaunchClick = {
+                    onIntent(
+                        LaunchListIntent.OnLaunchClicked(
+                            launchId = launch.id
+                        )
+                    )
                 }
             )
         }
 
-        // Append loading footer (when loading more items)
+        // Append loading footer
         if (pagingItems.loadState.append is LoadState.Loading) {
             item(key = "append_loader") {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                        .padding(vertical = AppSpacing.space_16),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator()

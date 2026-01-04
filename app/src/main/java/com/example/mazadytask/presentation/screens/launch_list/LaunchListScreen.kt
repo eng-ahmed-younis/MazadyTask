@@ -7,14 +7,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -46,7 +39,6 @@ import com.example.mazadytask.presentation.utils.UiErrorType
 import com.example.mazadytask.presentation.utils.asString
 import com.example.mazadytask.presentation.utils.observer.ConnectivityObserver
 import com.example.mazadytask.presentation.utils.toErrorTitle
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 
 @Composable
@@ -61,19 +53,18 @@ fun LaunchListScreenRoute(
 
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var errorType by remember { mutableStateOf<UiErrorType?>(null) }
-    var isErrorDialogVisible by remember { mutableStateOf(false) }
+    var showErrorDialog by remember { mutableStateOf(false) }
+
 
     LaunchedEffect(lifecycle) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effects.collect { effect ->
                 when (effect) {
-                    is MviEffect.Navigate -> {
-                        onNavigate(effect.screen)
-                    }
+                    is MviEffect.Navigate -> onNavigate(effect.screen)
                     is MviEffect.OnErrorDialog -> {
-                        errorMessage = effect.errorMessage.asString(context = context)
+                        errorMessage = effect.errorMessage.asString(context)
                         errorType = effect.errorType
-                        isErrorDialogVisible = true
+                        showErrorDialog = true
                     }
                 }
             }
@@ -86,10 +77,10 @@ fun LaunchListScreenRoute(
     )
 
     ErrorDialog(
-        visible = isErrorDialogVisible,
+        visible = showErrorDialog,
         message = errorMessage.orEmpty(),
         title = errorType?.toErrorTitle(context),
-        onDismiss = { isErrorDialogVisible = false }
+        onDismiss = { showErrorDialog = false }
     )
 
     LaunchListScreen(
@@ -107,39 +98,29 @@ fun LaunchListScreen(
     onIntent: (LaunchListIntent) -> Unit
 ) {
     val colors = LocalLaunchColors.current
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val scrollBehavior =
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+
     var previousNetworkState by remember { mutableStateOf<ConnectivityObserver.State?>(null) }
 
     LaunchedEffect(state.networkState) {
-        val currentState = state.networkState
-        val wasOffline = previousNetworkState == ConnectivityObserver.State.UnAvailable ||
-                previousNetworkState == ConnectivityObserver.State.Lost
+        val wasOffline =
+            previousNetworkState == ConnectivityObserver.State.UnAvailable ||
+                    previousNetworkState == ConnectivityObserver.State.Lost
 
-        when (currentState) {
+        when (state.networkState) {
             ConnectivityObserver.State.Available -> {
                 when {
-                    // Case 1: Network just became available after being offline
-                    wasOffline -> {
-                        if (pagingItems.itemCount == 0) {
-                            // No items loaded yet - trigger fresh load
-                            pagingItems.refresh()
-                        } else {
-                            // Had items before - just retry failed requests
-                            pagingItems.retry()
-                        }
-                    }
-                    // Case 2: First time loading with network available
-                    previousNetworkState == null && pagingItems.itemCount == 0 -> {
-                        pagingItems.refresh()
-                    }
+                    wasOffline && pagingItems.itemCount == 0 -> pagingItems.refresh()
+                    wasOffline -> pagingItems.retry()
+                    previousNetworkState == null && pagingItems.itemCount == 0 -> pagingItems.refresh()
                 }
             }
             else -> Unit
         }
 
-        previousNetworkState = currentState
+        previousNetworkState = state.networkState
     }
-
 
     LoadingDialog(visible = state.isLoading)
 
@@ -166,17 +147,15 @@ fun LaunchListScreen(
         containerColor = colors.surfaceBackground
     ) { paddingValues ->
         when {
-            // Initial loading state (first page loading, no items yet)
-            pagingItems.loadState.refresh is LoadState.Loading && pagingItems.itemCount == 0  -> {
+            pagingItems.loadState.refresh is LoadState.Loading &&
+                    pagingItems.itemCount == 0 -> {
                 LoadingDialog(visible = true)
             }
 
-            // Empty state (loaded successfully but no items)
             pagingItems.itemCount == 0 -> {
                 EmptyState(paddingValues = paddingValues)
             }
 
-            // Success state (has items)
             else -> {
                 LaunchList(
                     pagingItems = pagingItems,
@@ -188,27 +167,27 @@ fun LaunchListScreen(
     }
 }
 
-
-
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun LaunchListScreenPreview(){
+fun LaunchListScreenPreview() {
     val sampleLaunches = List(10) { index ->
         LaunchListItem(
             id = "id_$index",
             missionName = "Mission Apollo ${index + 1}",
             site = "site $index",
-            missionPatchUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCuw1ElaVhuL1nn9lXdoJVPOLWF4muWFtIvw&s",
+            missionPatchUrl = "",
             isBooked = true
         )
     }
 
-    val pagingItems = flowOf(PagingData.from(sampleLaunches)).collectAsLazyPagingItems()
-    MazadyAppTheme{
+    val pagingItems =
+        flowOf(PagingData.from(sampleLaunches)).collectAsLazyPagingItems()
+
+    MazadyAppTheme {
         LaunchListScreen(
             pagingItems = pagingItems,
-            onIntent = {},
-            state = LaunchListState()
+            state = LaunchListState(),
+            onIntent = {}
         )
     }
 }
