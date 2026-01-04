@@ -19,7 +19,6 @@ class NetworkConnectivityObserver(
 
     override fun observe(): Flow<ConnectivityObserver.State> = callbackFlow {
 
-        // ✅ Emit initial state
         trySend(currentState())
 
         val callback = object : ConnectivityManager.NetworkCallback() {

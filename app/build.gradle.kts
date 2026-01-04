@@ -6,7 +6,7 @@ plugins {
 
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt)
-    id("org.jetbrains.kotlin.plugin.serialization") // Apply the plugin
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
@@ -107,6 +107,8 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    testImplementation("io.mockk:mockk:1.13.10")
+    testImplementation("app.cash.turbine:turbine:1.0.0")
 
     // OkHttp
     implementation(libs.okhttp)
@@ -122,7 +124,6 @@ dependencies {
 
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
-    // The old "io.coil-kt:coil:0.9.1" dependency has been removed.
 
     // Material Icons
     implementation(libs.androidx.material.icons.extended)
@@ -144,7 +145,6 @@ kapt {
 
 apollo {
     service("mazady") {
-        // generated models package
         srcDir("src/main/graphql/com/example/mazadytask")
         packageName.set("com.example.mazadytask.graphql")
     }
