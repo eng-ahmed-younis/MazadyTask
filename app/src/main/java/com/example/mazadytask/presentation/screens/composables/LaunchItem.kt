@@ -111,8 +111,7 @@ fun LaunchItemPreview() {
                 id = "1",
                 missionName = "Falcon 1",
                 site = "CRS-21",
-                missionPatchUrl = "https://st4.depositphotos.com/8345768/23766/i/450/depositphotos_237666660-stock-photo-closeup-head-tiger-black-background.jpg",
-                isBooked = false
+                missionPatchUrl = "https://st4.depositphotos.com/8345768/23766/i/450/depositphotos_237666660-stock-photo-closeup-head-tiger-black-background.jpg"
             )
         ) {
 

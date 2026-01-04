@@ -46,8 +46,7 @@ class LaunchesPagingSource(
                         id = launch.id.orEmpty(),
                         missionName = launch.mission?.name.orEmpty(),
                         site = launch.site,
-                        missionPatchUrl = launch.mission?.missionPatch,
-                        isBooked = launch.isBooked ?: false
+                        missionPatchUrl = launch.mission?.missionPatch ?: "",
                     )
                 }
 

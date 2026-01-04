@@ -22,8 +22,7 @@ fun LaunchListQuery.Launch.toDomainLaunchListItem() : LaunchListItem {
         id = id,
         missionName =mission?.name ?: "Unknown mission",
         site = site,
-        missionPatchUrl = mission?.missionPatch,
-        isBooked = isBooked
+        missionPatchUrl = mission?.missionPatch ?: ""
     )
 }
 

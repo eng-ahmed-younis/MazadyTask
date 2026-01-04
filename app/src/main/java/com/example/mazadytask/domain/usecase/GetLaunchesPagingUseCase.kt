@@ -10,7 +10,7 @@ import javax.inject.Inject
 class GetLaunchesPagingUseCase @Inject constructor(
     private val repo: LaunchesRepository
 ) {
-    operator fun invoke(pageSize: Int = 20): Flow<PagingData<LaunchListItem>> {
+    operator fun invoke(pageSize: Int): Flow<PagingData<LaunchListItem>> {
         return repo.launchesPaging(pageSize)
     }
 }

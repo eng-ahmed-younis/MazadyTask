@@ -175,8 +175,7 @@ fun LaunchListScreenPreview() {
             id = "id_$index",
             missionName = "Mission Apollo ${index + 1}",
             site = "site $index",
-            missionPatchUrl = "",
-            isBooked = true
+            missionPatchUrl = ""
         )
     }
 

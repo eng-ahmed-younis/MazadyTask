@@ -94,8 +94,7 @@ fun LaunchListPreview() {
             id = "id_$index",
             missionName = "Mission Apollo ${index + 1}",
             site = "site $index",
-            missionPatchUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCuw1ElaVhuL1nn9lXdoJVPOLWF4muWFtIvw&s",
-            isBooked = true
+            missionPatchUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCuw1ElaVhuL1nn9lXdoJVPOLWF4muWFtIvw&s"
         )
     }
 

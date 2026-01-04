@@ -11,14 +11,9 @@ query LaunchList(
         launches {
             id
             site
-            isBooked
             mission {
                 name
                 missionPatch(size: SMALL)
-            }
-            rocket {
-                id
-                name
             }
         }
     }
